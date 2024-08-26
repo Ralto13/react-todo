@@ -1,4 +1,7 @@
 import { useState } from "react"
+import TodoHeader from "./components/TodoHeader"
+import TodoInput from "./components/TodoInput"
+import TodoList from "./components/TodoList"
 
 function fetchTodos(){
   const result = []
@@ -10,59 +13,30 @@ function fetchTodos(){
 }
 
 function App() {
-  // const [count, setCount] = useState(0)
-  const [inputText, setInputText] = useState('')
   const [todos, setTodos] = useState(fetchTodos())
 
-  const handleInput = (event) => {
-    console.log(event)
-    const value = event.target.value
-    setInputText(value)
-  }
-
-  const handleClick = ()=> {
-    console.log('clicked')
-    localStorage.setItem(inputText,inputText)
+  const addTodo = (todo)=> {
+    localStorage.setItem(todo,todo)
     setTodos((currentTodos)=>{
-      return[...currentTodos, inputText]
+      return[...currentTodos, todo]
     })
-    setInputText('')
   }
-
-  const handleRemove = (todo, index) => {
-      // console.log(todo,index)
-      // todos.splice(index,1)
-      // console.log(todos)
-      const result = todos.filter(todoItems=>{
-        if(todoItems !== todo){
-          return true
-        }
-      })
-
-      setTodos(result)
-      localStorage.removeItem(todo)
-
-  }
+  
+  const removeTodo = (todo) => {
+    const result = todos.filter(todoItems=>{
+      if(todoItems !== todo){
+        return true
+      }
+    })
+    setTodos(result)
+    localStorage.removeItem(todo)
+}
 
   return (
     <div>
-      <h1>TODO 앱</h1>
-      <div>
-        <input type="text" name="" id="" value={inputText} onChange={handleInput}/>
-        <button onClick={handleClick}>add</button>
-      </div>
-      <div>
-        {
-          todos.map((todo,index) => {
-            return (
-              <li key={index}>
-                <span>{todo}</span>
-                <button onClick={() => handleRemove(todo, index)}>remove</button>
-              </li>
-            )
-          })
-        }
-      </div>
+      <TodoHeader />
+      <TodoInput onTodoAdd={addTodo}/>
+      <TodoList todos={todos} onTodoRemove={removeTodo} />
     </div>
   )
 }
